@@ -73,3 +73,76 @@ kubectl create secret generic gke-cloud-sql-secrets \
   --from-literal=username=odoo \
   --from-literal=password=password;
 ```
+
+## 6. Deploy Odoo lên GKE
+
+Trong phần **Workloads** trên menu navigation của GKE có lựa chọn cho mình deploy image từ registry của Google nhưng sẽ hơi khó edit sau khi tạo nên mình dùng file deployment.yaml để deploy.
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: odoo-app
+  template:
+    metadata:
+      labels:
+        app: odoo-app
+    spec:
+      serviceAccountName: ksa-bidv-cloudsql
+      containers:
+      - name: odoo-app
+        image: asia-southeast1-docker.pkg.dev/odoo-lab-vsi/bidv-poc/bidv_poc
+        ports:
+        - containerPort: 8069
+        env:
+        - name: DB_PORT_5432_TCP_ADDR
+          value: "localhost"
+        - name: DB_PORT_5432_TCP_PORT
+          value: "5432"
+        - name: INSTANCE_HOST
+          value: "127.0.0.1"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_ENV_POSTGRES_USER
+          value: "odoo"
+        - name: DB_ENV_POSTGRES_PASSWORD
+          value: "+Be8Tv*[?VGAj%a"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: gke-cloud-sql-secrets
+              key: username
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: gke-cloud-sql-secrets
+              key: password
+        - name: DB_NAME
+          value: "odoo"
+      - name: cloud-sql-proxy
+        # This uses the latest version of the Cloud SQL proxy
+        # It is recommended to use a specific version for production environments.
+        # See: https://github.com/GoogleCloudPlatform/cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:latest
+        command:
+          - "/cloud_sql_proxy"
+
+          # If connecting from a VPC-native GKE cluster, you can use the
+          # following flag to have the proxy connect over private IP
+          - "-ip_address_types=PRIVATE"
+
+          # tcp should be set to the port the proxy should listen on
+          # and should match the DB_PORT value set above.
+          # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
+          - "-instances=odoo-lab-vsi:asia-southeast1:odoo-bidv-doc=tcp:5432"
+        securityContext:
+          # The default Cloud SQL proxy image runs as the
+          # "nonroot" user and group (uid: 65532) by default.
+          runAsNonRoot: true
+# [END cloud_sql_postgres_databasesql_gke_quickstart_deployment]
+```
