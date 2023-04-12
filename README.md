@@ -2,6 +2,13 @@
 
 Bài viết mình có tham khảo từ [guide chính chủ](https://cloud.google.com/sql/docs/postgres/connect-instance-kubernetes). Để chạy các lệnh gcloud ta có thể dùng trực tiếp Cloud Shell trên web hoặc cài gcloud CLI trên terminal.
 
+Truớc khi bắt đầu chúng ta cần enable các API sau:
+- Compute Engine API
+- Cloud SQL Admin API
+- Google Kubernetes Engine API
+- Artifact Registry API
+- Cloud Build API
+
 ## 1. Tạo project trên console Google Cloud và enable billing cho project đó.
 
 ## 2. Tạo instance Cloud SQL và database
@@ -111,7 +118,7 @@ spec:
         - name: DB_ENV_POSTGRES_USER
           value: "odoo"
         - name: DB_ENV_POSTGRES_PASSWORD
-          value: "+Be8Tv*[?VGAj%a"
+          value: "password"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
