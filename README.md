@@ -159,11 +159,11 @@ Cuối cùng ta tạo service để truy cập web từ bên ngoài với lệnh
 apiVersion: v1
 kind: Service
 metadata:
-  name: gke-cloud-sql-app
+  name: odoo-app
 spec:
   type: LoadBalancer
   selector:
-    app: gke-cloud-sql-app
+    app: odoo-app
   ports:
   - port: 80
     targetPort: 8069
