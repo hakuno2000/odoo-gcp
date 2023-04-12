@@ -115,10 +115,6 @@ spec:
           value: "127.0.0.1"
         - name: DB_PORT
           value: "5432"
-        - name: DB_ENV_POSTGRES_USER
-          value: "odoo"
-        - name: DB_ENV_POSTGRES_PASSWORD
-          value: "password"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -151,5 +147,24 @@ spec:
           # The default Cloud SQL proxy image runs as the
           # "nonroot" user and group (uid: 65532) by default.
           runAsNonRoot: true
-# [END cloud_sql_postgres_databasesql_gke_quickstart_deployment]
+```
+
+Trong file này thì cần chú ý là phần image các bạn có thể để image của Odoo trên Docker Hub, cái image này của mình là mình push lên **Artifact Registry** của GCP.
+
+Chạy ```kubectl apply -f deployment.yaml``` để deploy. 
+
+Cuối cùng ta tạo service để truy cập web từ bên ngoài với lệnh ```kubectl apply -f service.yaml```. File serivce thì như sau
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: gke-cloud-sql-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: gke-cloud-sql-app
+  ports:
+  - port: 80
+    targetPort: 8069
 ```
