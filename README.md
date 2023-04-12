@@ -67,7 +67,7 @@ Cuối cùng dùng lệnh sau để hoàn tất việc bind
 ```
 kubectl annotate serviceaccount \
   ksa-bidv-cloudsql  \
-  iam.gke.io/gcp-service-account=gke-quickstart-service-account@odoo-lab-vsi.iam.gserviceaccount.com
+  iam.gke.io/gcp-service-account=gke-service-account@odoo-lab-vsi.iam.gserviceaccount.com
 ```
 
 ## 5. Config secret
