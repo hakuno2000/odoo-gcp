@@ -10,6 +10,7 @@ Truớc khi bắt đầu chúng ta cần enable các API sau:
 - Cloud Build API
 
 ## 1. Tạo project trên console Google Cloud và enable billing cho project đó.
+Cần một billing account để dùng các dịch vụ của Google Cloud.
 
 ## 2. Tạo instance Cloud SQL và database
 
